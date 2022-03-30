@@ -1,18 +1,29 @@
-<template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
-</template>
+<!-- home page is going to show all movies for viewing for the day.
+It will also include the actual sales and such -->
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import axios from "axios";
 
 export default {
-  name: "Home",
-  components: {
-    HelloWorld,
+  data: function () {
+    return {
+      movies: [],
+    };
+  },
+  created: function () {
+    this.movieIndex();
+  },
+  methods: {
+    movieIndex: function () {
+      axios.get("http://localhost:3000/movies").then((response) => {
+        console.log(response.data);
+        this.movies = response.data;
+      });
+    },
   },
 };
 </script>
+
+<template>
+  <h1 v-for="movie in movies" v-bind:key="movie.id">{{ movie.title }}</h1>
+</template>
