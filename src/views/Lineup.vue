@@ -4,7 +4,8 @@ export default {
   data: function () {
     return {
       movies: [],
-      timeslots: { movieInfo: {} },
+      timeslots: {},
+      reports: { nestedSlots: [], sales: {} },
       movieTitle: "",
       movieDate: "",
       movieTime: "",
@@ -16,6 +17,7 @@ export default {
   created: function () {
     this.movieIndex();
     this.timeSlotIndex();
+    this.displayReports();
   },
   methods: {
     movieIndex: function () {
@@ -41,6 +43,12 @@ export default {
         console.log(response.data);
       });
     },
+    displayReports: function () {
+      axios.get("http://localhost:3000/reports").then((response) => {
+        console.log(response.data);
+        this.reports = response.data;
+      });
+    },
   },
 };
 </script>
@@ -48,6 +56,7 @@ export default {
 <template>
   <div>
     <form v-on:submit.prevent="timeSlotSet()">
+      <!-- This is going to be made a dropdown that displays movie title and sets input to movie ID -->
       Title:
       <input type="text" v-model="movieTitle" />
       Day:
@@ -77,6 +86,12 @@ export default {
         </tr>
       </tbody>
     </table>
+  </div>
+  <h1>Reports</h1>
+  <div v-for="report in reports" v-bind:key="report.id">
+    <h2>{{ report.name }}</h2>
+    <h3 v-for="timeslot in reports.nestedSlots" v-bind:key="timeslot.id">{{ timeslot.movie.title }}</h3>
+    <p>{{ report.sales }}</p>
   </div>
   <div class="movies" v-for="movie in movies" v-bind:key="movie.id">
     <h1>{{ movie.title }}</h1>
